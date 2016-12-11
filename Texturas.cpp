@@ -45,7 +45,9 @@ Texturas::Texturas(string direccion, char* file, SDL_Renderer *renderizado) {
 }
 
 Texturas::~Texturas() {
-	SDL_DestroyTexture(textura);
+	if (textura != NULL) {
+		SDL_DestroyTexture(textura);
+	}
 }
 
 SDL_Texture* Texturas::getTextura() {

@@ -21,7 +21,7 @@ Planes::Planes(int posx, int posy, int nf, string direccion, char* file, SDL_Ren
 	x = posx;
 	y = posy;
 	img = new Sprite [nf];
-	img->addframe(direccion, file, renderizado);
+	img->addFrame(direccion, file, renderizado);
 }
 
 Planes::~Planes() {

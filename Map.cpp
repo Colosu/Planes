@@ -5,46 +5,75 @@
  *      Author: colosu
  */
 
+#include <fstream>
+using namespace std;
 #include "Map.h"
 #include "Sprite.h"
+#include "Settings.h"
 #include "SDL2/SDL.h"
 
-Map::Map(int nf) {
+Map::Map() {
 
-	suelo = new Sprite[nf];
-	nframes = nf;
-	cont = 0;
+	mapa = NULL;
+	indice = 0;
+	indice_y = 0;
+}
+
+Map::Map(string direccion, char* file) {
+	mapa = new int* [MAP_ROWS];
+	for (int i = 0; i < MAP_ROWS; i++) {
+
+		mapa[i] = new int [MAP_COLUMNS];
+	}
+
+	ifstream input;
+	char in;
+	input.open((direccion + file).c_str());
+
+	for (int i = 0; i < MAP_ROWS; i++) {
+		for (int j = 0; j < MAP_COLUMNS; j++) {
+
+			input.get(in);
+			input.ignore(1);
+			mapa[i][j] = (int)in - 48;
+		}
+	}
+
+	input.close();
+
+	indice = MAP_ROWS - ROWS;
+	indice_y = 0;
+
 }
 
 Map::~Map() {
 
-	for (int i = 0 ; i <= nframes-1 ; i++)
-		suelo[i].~Sprite();
-}
+	if (mapa != NULL) {
+		for (int i = 0; i < MAP_ROWS; i++) {
 
-void Map::addSprite(string direccion, char* file, SDL_Renderer *renderizado) {
-
-	if (cont < nframes) {
-		suelo[cont].addframe(direccion, file, renderizado);
-		cont++;
-	}
-}
-
-void Map::draw(SDL_Renderer *renderizado) {
-
-	int t, x, y;
-
-	for (int i = 0 ; i < 10 ; i++) {
-		for (int j = 0 ; j < 10 ; j++) {
-			t = mapa[i*10 + j];
-			// calculo de la posición del tile
-			x = j*64;
-			y = (i - 1)*64;
-
-			// dibujamos el tile
-			suelo[t].setx(x);
-			suelo[t].sety(y);
-			suelo[t].draw(renderizado);
+			delete mapa[i];
 		}
+		delete mapa;
 	}
+}
+
+int** Map::getMapa() {
+
+	return mapa;
+}
+
+void Map::scroll(int &indi, int &indi_y) {
+
+	indice_y += 2;
+	if (indice_y >= SPRITE_H) {
+		indice_y = 0;
+		indice -= 1;
+	}
+	if (indice <= 0) {
+		indice = MAP_ROWS-ROWS; // si llegamos al final, empezamos de nuevo.
+		indice_y = 0;
+	}
+
+	indi = indice;
+	indi_y = indice_y;
 }

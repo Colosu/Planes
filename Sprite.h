@@ -15,8 +15,8 @@ public:
 	Sprite();
 	Sprite(int nf);
 	~Sprite();
-	void addframe(string direccion, char* file, SDL_Renderer *renderizado);
-	void selframe(int nf);
+	void addFrame(string direccion, char* file, SDL_Renderer *renderizado);
+	void selFrame(int nf);
 	int frames() {return cont;}
 	void setx(int x) {posx = x;}
 	void sety(int y) {posy = y;}
@@ -30,7 +30,7 @@ public:
 	bool colision(Sprite sp);
 
 private:
-	Texturas *sprite;
+	Texturas* *sprite;
 	int posx;
 	int posy;
 	int estado;

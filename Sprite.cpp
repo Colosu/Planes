@@ -11,9 +11,8 @@
 
 Sprite::Sprite() {
 
-	int nf = 1;
-	sprite = new Texturas[nf];
-	nframes = nf;
+	sprite = new Texturas*[1];
+	nframes = 1;
 	cont = 0;
 	posx = 0;
 	posy = 0;
@@ -22,7 +21,7 @@ Sprite::Sprite() {
 
 Sprite::Sprite(int nf) {
 
-	sprite = new Texturas[nf];
+	sprite = new Texturas*[nf];
 	nframes = nf;
 	cont = 0;
 	posx = 0;
@@ -32,20 +31,19 @@ Sprite::Sprite(int nf) {
 
 Sprite::~Sprite() {
 
-	delete sprite;
 }
 
-void Sprite::addframe(string direccion, char* file, SDL_Renderer *renderizado) {
+void Sprite::addFrame(string direccion, char* file, SDL_Renderer *renderizado) {
 
 	if (cont < nframes) {
-		sprite[cont] = Texturas(direccion, file, renderizado);
+		sprite[cont] = new Texturas(direccion, file, renderizado);
 		cont++;
 	}
 }
 
-void Sprite::selframe(int nf) {
+void Sprite::selFrame(int nf) {
 
-	if (nf <= nframes) {
+	if (nf < nframes) {
 		estado = nf;
 	}
 }
@@ -54,7 +52,7 @@ int Sprite::getw() {
 
 	int w;
 	int h;
-	SDL_QueryTexture(sprite[cont].getTextura(), NULL, NULL, &w, &h);
+	SDL_QueryTexture(sprite[estado]->getTextura(), NULL, NULL, &w, &h);
 	return w;
 }
 
@@ -62,13 +60,13 @@ int Sprite::geth() {
 
 	int w;
 	int h;
-	SDL_QueryTexture(sprite[cont].getTextura(), NULL, NULL, &w, &h);
+	SDL_QueryTexture(sprite[estado]->getTextura(), NULL, NULL, &w, &h);
 	return h;
 }
 
 void Sprite::draw(SDL_Renderer *renderizado) {
 
-	sprite[cont].renderizarTextura(renderizado, posx, posy);
+	sprite[estado]->renderizarTextura(renderizado, posx, posy);
 }
 
 bool Sprite::colision(Sprite sp) {

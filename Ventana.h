@@ -55,7 +55,6 @@ private:
 	int extraY; //Añadido al alto de la ventana para colocar un posible HUD.
 	SDL_Window *ventana = NULL; //La ventana.
 	SDL_Renderer *renderizado; //El renderizado de la ventana.
-	bool inicializado; //Representa si se ha inicializado SDL o no.
 
 };
 

@@ -17,21 +17,25 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
+#include <string>
+using namespace std;
 #include "Vista.h"
 #include "Ventana.h"
 #include "Sprite.h"
 #include "Fuentes.h"
+#include "Map.h"
 #include "Settings.h"
 #include "SDL2/SDL.h"
 
-Vista::Vista() {
+Vista::Vista(const string &direc) {
 	try {
-		window = new Ventana(COLUMNS * SPRITE_W, ROWS * SPRITE_H, 0, 0, "2048");
+		direccion = getDireccion(direc);
+		window = new Ventana(COLUMNS * SPRITE_W, ROWS * SPRITE_H, 0, 0, TITLE);
 		sprites = new Sprite [N_SPRITES];
 		fonts = new Fuentes [N_FONTS];
-		max = 0;
-		punt = 0;
+		mapa = new Map(direccion, (char*)"mapa.csv");
+		contSprites = 0;
+		contFonts = 0;
 	} catch (exception *e) {
 		throw e;
 	}
@@ -46,38 +50,52 @@ Ventana* Vista::getWindow() {
 	return window;
 }
 
-void Vista::updateVista() {
-	SDL_Texture *textura = NULL;
-	SDL_RenderClear(window->getRenderizado());
-	for (int i = 0; i < controlador->getPartida()->getTab()->getRows(); i++) {
-		for (int j = 0; j < controlador->getPartida()->getTab()->getColumns(); j++) {
-			switch (controlador->getPartida()->getTab()->getCasilla(i,j)->getNumber()) {
-				case 2: textura = sprites->getTexturas()->getDos(); break;
-				case 4: textura = sprites->getTexturas()->getCuatro(); break;
-				case 8: textura = sprites->getTexturas()->getOcho(); break;
-				case 16: textura = sprites->getTexturas()->getDieciseis(); break;
-				case 32: textura = sprites->getTexturas()->getTreintaydos(); break;
-				case 64: textura = sprites->getTexturas()->getSesentaycuatro(); break;
-				case 128: textura = sprites->getTexturas()->getCientoveintiocho(); break;
-				case 256: textura = sprites->getTexturas()->getDoscientoscincuentayseis(); break;
-				case 512: textura = sprites->getTexturas()->getQuinientosdoce(); break;
-				case 1024: textura = sprites->getTexturas()->getMilveinticuatro(); break;
-				case 2048: textura = sprites->getTexturas()->getDosmilcuarentayocho(); break;
-				default: textura = sprites->getTexturas()->getCero();
-			}
-			window->getTexturas()->renderizarTextura(textura, j*100, i*100);
-		}
+void Vista::addSprite(int nf) {
+
+	if (contSprites < N_SPRITES) {
+		sprites[contSprites] = Sprite(nf);
+		contSprites++;
 	}
-	max = controlador->getPartida()->getMax();
-	punt = controlador->getPartida()->getPunt();
-	window->getTexturas()->renderizarTextura(window->getTexturas()->getPuntuacion(), 50, ROWS*100 + 40);
-	window->getTexturas()->setMaximo(max);
-	window->getTexturas()->setPuntos(punt);
-	window->getTexturas()->renderizarTextura(window->getTexturas()->getMaximo(), 100, ROWS*100 + 40);
-	window->getTexturas()->renderizarTextura(window->getTexturas()->getPuntos(), 280, ROWS*100 + 40);
-	SDL_RenderPresent(window->getRenderizado());
 }
 
+void Vista::addFrame(char* file, int sprite) {
+
+	if (sprite < contSprites) {
+		sprites[sprite].addFrame(direccion, file, window->getRenderizado());
+	}
+}
+
+void Vista::addFont(char* file, int size) {
+
+	if (contFonts < N_FONTS) {
+		fonts[contFonts] = Fuentes(direccion, file, size);
+		contFonts++;
+	}
+}
+
+void Vista::updateVista() {
+
+	int indice = 0;
+	int indice_y = 0;
+	int** map = mapa->getMapa();
+	mapa->scroll(indice, indice_y);
+	int x, y;
+	for (int i = indice - 1; i < indice + ROWS; i++) {
+		for (int j = 0; j < COLUMNS; j++) {
+
+			// calculo de la posición del tile
+			x = j*SPRITE_W;
+			y = (i - indice)*SPRITE_H + indice_y;
+
+			// dibujamos el tile
+			sprites[map[i][j]].setx(x);
+			sprites[map[i][j]].sety(y);
+			sprites[map[i][j]].draw(window->getRenderizado());
+		}
+	}
+}
+
+/*
 bool Vista::mostrarInicio(int &ancho, int &alto) {
 
 	bool iniciado = false;
@@ -183,6 +201,7 @@ bool Vista::mostrarFinal(int &ancho, int &alto) {
 
 	return iniciado;
 }
+*/
 
 string Vista::getDireccion(const string &direccion) {
 

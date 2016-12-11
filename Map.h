@@ -13,26 +13,17 @@
 
 class Map {
 public:
-	Map(int nf);
+	Map();
+	Map(string direccion, char* file);
 	~Map();
-	void addSprite(string direccion, char* file, SDL_Renderer *renderizado);
-	void draw(SDL_Renderer *renderizado);
+	int** getMapa();
+	void scroll(int &indi, int &indi_y);
 
 private:
 
-	int mapa[100]= {0,0,0,0,0,0,0,0,0,0,
-	 	 	0,0,0,0,0,2,0,0,0,0,
-			0,0,1,0,0,0,0,1,0,0,
-			2,0,0,0,0,0,0,0,0,0,
-			0,0,0,0,1,0,0,0,2,0,
-			0,0,0,0,0,0,0,0,0,0,
-			0,2,0,0,0,0,0,0,0,0,
-			0,0,0,0,0,0,0,1,0,0,
-			0,0,1,0,0,0,0,0,0,0,
-			0,0,0,0,0,0,0,0,0,0};
-	int nframes;
-	int cont;
-	Sprite *suelo;
+	int** mapa;
+	int indice;
+	int indice_y;
 };
 
 #endif /* MAP_H_ */

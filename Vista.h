@@ -20,18 +20,23 @@
 #ifndef _VISTA_H_
 #define _VISTA_H_
 
+#include <string>
+using namespace std;
 #include "Ventana.h"
 #include "Sprite.h"
 #include "Fuentes.h"
+#include "Map.h"
+#include "Settings.h"
 
 class Vista {
 public:
 
-	Vista();
+	Vista(const string &direc = "");
 	~Vista();
 	Ventana* getWindow();
-	void addSprite();
-	void addFont();
+	void addSprite(int nf);
+	void addFrame(char* file, int sprite);
+	void addFont(char* file, int size);
 	void updateVista();
 	bool mostrarInicio(int &ancho, int &alto);
 	bool mostrarFinal(int &ancho, int &alto);
@@ -43,8 +48,10 @@ private:
 	Ventana *window;
 	Sprite *sprites;
 	Fuentes *fonts;
-	int max;
-	int punt;
+	Map *mapa;
+	int contSprites;
+	int contFonts;
+	string direccion;
 };
 
 #endif // _VISTA_H_
