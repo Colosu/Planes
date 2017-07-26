@@ -10,6 +10,7 @@
 
 #include "Sprite.h"
 #include "SDL2/SDL.h"
+#include "Settings.h"
 
 class Planes {
 public:
@@ -27,13 +28,31 @@ public:
 	int gety() {return y;}
 	int getw() {return img->getw();}
 	int geth() {return img->geth();}
+	Sprite* getSprite() {return img;}
+	Sprite* getBala() {return mibala;}
 	void draw(SDL_Renderer *renderizado);
-	bool colision(Planes* sp) {return img->colision(*sp->img);};
+	bool colision(Sprite* sp) {return img->colision(*sp);};
+	void creaDisparo();
+	void mueveBalas();
+	void explota();
+	void explosion(SDL_Renderer *renderizado);
 
 private:
 	int x;
 	int y;
 	Sprite* img;
+	Sprite* mibala;
+	Sprite* explode;
+	struct disparo {
+		int x;
+		int y;
+	} bala[MAXBALAS + 1];
+	struct explosion {
+		int activo;
+		int x;
+		int y;
+		int nframe;
+	} exp;
 };
 
 #endif /* PLANES_H_ */

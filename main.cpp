@@ -27,9 +27,6 @@ void DrawScene(SDL_Renderer *renderizado) {
 	jugador->draw(renderizado);
 	enemigo->draw(renderizado);
 	// ¿ha colisionado con la nave?
-	if (enemigo->colision(jugador) == true) {
-		done=1;
-	}
 	SDL_RenderPresent(renderizado);
 }
 
@@ -53,6 +50,16 @@ int main() {
 	while (done == 0) {
 
 		ini_milisegundos=SDL_GetTicks();
+		jugador->mueveBalas();
+		enemigo->mueveBalas();
+
+		if (enemigo->colision(jugador->getBala())) {
+			enemigo->explota();
+		}
+		if (jugador->colision(enemigo->getBala())) {
+			jugador->explota();
+		}
+
 
 		// dibujamos el frame
 		DrawScene(vista->getWindow()->getRenderizado());
@@ -67,6 +74,7 @@ int main() {
 	 			//if (event.key.keysym.sym == SDLK_DOWN && (jugador->gety() < 620)) {jugador->sety(jugador->gety()+5);}
 	 			if (event.key.keysym.sym == SDLK_LEFT && (jugador->getx() > 0)) {jugador->setx(jugador->getx()-5);}
 	 			if (event.key.keysym.sym == SDLK_RIGHT && (jugador->getx() < 620)) {jugador->setx(jugador->getx()+5);}
+	 			if (event.key.keysym.sym == SDLK_SPACE) {jugador->creaDisparo();}
 	 			if (event.key.keysym.sym == SDLK_ESCAPE) {done=1;}
 
 	 		}
